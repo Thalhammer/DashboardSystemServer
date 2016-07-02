@@ -13,4 +13,4 @@ This server will be extended to provide a way to change system behaviour like
 * WLAN configuration
 * Bluetooth configuration
 * Display brightness
-* Filesystemaccess
+* Filesystem access
