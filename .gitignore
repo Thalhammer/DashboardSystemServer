@@ -1,0 +1,5 @@
+*.exe
+DashboardServer/bin
+DashboardServer/obj
+packages
+.vs

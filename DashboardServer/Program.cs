@@ -14,8 +14,7 @@ namespace DashboardServer
             _hook = new KeyBoardHook();
             _hook.KeyBoardEvent += (obj, args) =>
             {
-                Debug.Write(args.IsKeyDown ? "[DOWN]" : "[UP]  ");
-                Debug.WriteLine(args.Key);
+                Debug.WriteLine((args.IsKeyDown ? "[DOWN]" : "[UP]  ") + args.Key.ToString());
                 SystemService.FireKeyBoardEvent(args);
             };
         }
