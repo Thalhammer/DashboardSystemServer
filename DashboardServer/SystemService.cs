@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Linq;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
@@ -12,33 +13,81 @@ namespace DashboardServer
         {
             KeyBoardEvent?.Invoke(null, args);
         }
-        private static event KeyBoardHook.KeyBoardEventHandler KeyBoardEvent;
-        private List<Keys> SupressList = new List<Keys>();
-        JsonRPC _rpc;
 
-        public SystemService()
+        private static event KeyBoardHook.KeyBoardEventHandler KeyBoardEvent;
+        private List<Keys> SuppressList = new List<Keys>();
+        private List<Keys> NotifyList = new List<Keys>();
+        private JsonRPC _rpc;
+        private Configuration _config;
+
+        public SystemService(Configuration config)
         {
+            _config = config;
             _rpc = new JsonRPC();
             _rpc.SendCallback = (str) =>
             {
                 this.Send(str);
             };
-            _rpc.AddMethod("set_key_suppressed", (parameters) =>
+            addRPCMethod("Keyboard.setSuppressedKeys", (parameters) =>
             {
-                bool suppressed = parameters.suppressed;
-                string key = parameters.key;
-
-                Keys keys = (Keys)Enum.Parse(typeof(Keys), key);
-                if (suppressed && !SupressList.Contains(keys))
+                if (parameters.all == true)
                 {
-                    SupressList.Add(keys);
+                    SuppressList = null;
                 }
-                else if (!suppressed && SupressList.Contains(keys))
+                else
                 {
-                    SupressList.Remove(keys);
+                    SuppressList = new List<Keys>();
+                    foreach (string key in parameters.keys)
+                    {
+                        Keys keys = (Keys)Enum.Parse(typeof(Keys), key);
+                        if (config.KeyboardSuppressAllowedKeys.Contains(keys))
+                        {
+                            SuppressList.Add(keys);
+                        }
+                    }
                 }
                 return true;
             });
+            addRPCMethod("Keyboard.getSuppressedKeys", (parameters) =>
+            {
+                return SuppressList == null ? null : SuppressList.Select((n) => Enum.GetName(typeof(Keys), n)).ToArray();
+            });
+            addRPCMethod("Keyboard.setNotificationKeys", (parameters) =>
+            {
+                if (parameters.all == true)
+                {
+                    NotifyList = null;
+                }
+                else
+                {
+                    NotifyList = new List<Keys>();
+                    foreach (string key in parameters.keys)
+                    {
+                        Keys keys = (Keys)Enum.Parse(typeof(Keys), key);
+                        if (config.KeyboardNotifyAllowedKeys.Contains(keys))
+                        {
+                            NotifyList.Add(keys);
+                        }
+                    }
+                }
+                return true;
+            });
+            addRPCMethod("Keyboard.getNotificationKeys", (parameters) =>
+            {
+                return NotifyList == null ? null : NotifyList.Select((n) => Enum.GetName(typeof(Keys), n)).ToArray();
+            });
+            addRPCMethod("Server.getSupportedMethods", (parameter) =>
+            {
+                return _rpc.GetMethods();
+            });
+        }
+
+        private void addRPCMethod(string method, Func<dynamic, object> fn)
+        {
+            if(_config.AllowedCommands.Contains(method))
+            {
+                _rpc.AddMethod(method, fn);
+            }
         }
 
         protected override void OnOpen()
@@ -57,13 +106,26 @@ namespace DashboardServer
 
         private void SystemService_KeyBoardEvent(object sender, KeyBoardEventArgs args)
         {
-            if(!args.SuppressAction && SupressList.Contains(args.Key))
+            if(SuppressList == null || SuppressList.Contains(args.Key))
             {
                 args.SuppressAction = true;
             }
-            if(args.IsKeyDown)
+            if (NotifyList == null || NotifyList.Contains(args.Key))
             {
-                _rpc.SendNotification("key_down", new { key = args.Key.ToString() });
+                object options = new
+                {
+                    key = args.Key.ToString(),
+                    shift = args.Shift,
+                    menu = args.Menu,
+                    control = args.Control
+                };
+                if (args.IsKeyDown)
+                {
+                    _rpc.SendNotification("key_down", options);
+                } else
+                {
+                    _rpc.SendNotification("key_up", options);
+                }
             }
         }
 

@@ -1,0 +1,21 @@
+﻿{
+  "port": 666,
+  "address": "0.0.0.0",
+  "allowed_commands": [
+    "Server.getSupportedMethods",
+    "Keyboard.setSuppressedKeys",
+    "Keyboard.getSuppressedKeys",
+    "Keyboard.setNotificationKeys",
+    "Keyboard.getNotificationKeys"
+  ],
+  "keyboard": {
+    "notify_allowed_keys": [
+      "LWin",
+      "RWin"
+    ],
+    "suppress_allowed_keys": [
+      "LWin",
+      "RWin"
+    ]
+  }
+}

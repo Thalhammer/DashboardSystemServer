@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DashboardServer
 {
@@ -25,6 +26,11 @@ namespace DashboardServer
         public void RemoveMethod(string method)
         {
             _methods.Remove(method);
+        }
+
+        public List<string> GetMethods()
+        {
+            return _methods.Select((n) => n.Key).ToList();
         }
 
         public void SendCallMethod(string method, dynamic parameters, Action<dynamic> cb)
