@@ -62,19 +62,33 @@ namespace DashboardServer
             {
                 _allowedCommands.Add(str);
             }
-            _keyboardNotifyAllowedKeys = new List<Keys>();
-            foreach (string str in config.keyboard.notify_allowed_keys)
-            {
-                _keyboardNotifyAllowedKeys.Add((Keys)Enum.Parse(typeof(Keys), str));
-            }
-            _keyboardSuppressAllowedKeys = new List<Keys>();
-            foreach (string str in config.keyboard.suppress_allowed_keys)
-            {
-                _keyboardSuppressAllowedKeys.Add((Keys)Enum.Parse(typeof(Keys), str));
-            }
+            _keyboardNotifyAllowedKeys = parseKeyList(config.keyboard.notify_allowed_keys);
+            _keyboardSuppressAllowedKeys = parseKeyList(config.keyboard.suppress_allowed_keys);
             Port = config.port;
             Address = IPAddress.Parse((string)config.address);
             HideConsole = config.hide_console;
+        }
+
+        private static List<Keys> parseKeyList(dynamic obj)
+        {
+            var list = new List<Keys>();
+            foreach (string str in obj)
+            {
+                if(str == "*all*")
+                {
+                    foreach (Keys k in Enum.GetValues(typeof(Keys)))
+                    {
+                        list.Add(k);
+                    }
+                } else if (str.StartsWith("-"))
+                {
+                    list.Remove((Keys)Enum.Parse(typeof(Keys), str.Substring(1)));
+                } else
+                {
+                    list.Add((Keys)Enum.Parse(typeof(Keys), str));
+                }
+            }
+            return list;
         }
 
     }
