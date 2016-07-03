@@ -46,7 +46,10 @@ namespace DashboardServer
                         }
                     }
                 }
-                return true;
+                return new
+                {
+                    keys = SuppressList == null ? null : SuppressList.Select((n) => n.ToString())
+                };
             });
             addRPCMethod("Keyboard.getSuppressedKeys", (parameters) =>
             {
@@ -70,7 +73,10 @@ namespace DashboardServer
                         }
                     }
                 }
-                return true;
+                return new
+                {
+                    keys = NotifyList == null ? null : NotifyList.Select((n) => n.ToString())
+                };
             });
             addRPCMethod("Keyboard.getNotificationKeys", (parameters) =>
             {

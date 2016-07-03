@@ -1,6 +1,7 @@
 ﻿{
+  "hide_console": false,
   "port": 666,
-  "address": "0.0.0.0",
+  "address": "127.0.0.1",
   "allowed_commands": [
     "Server.getSupportedMethods",
     "Keyboard.setSuppressedKeys",
@@ -10,12 +11,12 @@
   ],
   "keyboard": {
     "notify_allowed_keys": [
-      "LWin",
-      "RWin"
+      "MediaPlayPause",
+      "MediaPreviousTrack",
+      "MediaNextTrack",
+      "MediaStop"
     ],
     "suppress_allowed_keys": [
-      "LWin",
-      "RWin"
     ]
   }
 }

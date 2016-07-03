@@ -25,7 +25,8 @@ namespace DashboardServer
 
         private void SetupWebSocketServer(Configuration config)
         {
-            _wssv = new WebSocketServer(config.Address, config.Port);
+            _wssv = new WebSocketServer(config.Address, config.Port, true);
+            _wssv.SslConfiguration.ServerCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2("key.p12", "Temp");
             _wssv.AddWebSocketService<SystemService>("/system", () => { return new SystemService(config); });
             _wssv.Start();
         }
@@ -38,6 +39,7 @@ namespace DashboardServer
         private void Run()
         {
             Configuration config = new Configuration();
+            InteropUtils.ShowConsole = !config.HideConsole;
             Console.WriteLine("Setting up keyboard hooks");
             SetupHook();
             Console.WriteLine("Starting WebSocketServer");

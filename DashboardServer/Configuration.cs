@@ -12,6 +12,7 @@ namespace DashboardServer
 {
     class Configuration
     {
+        public bool HideConsole { get; private set; }
         public UInt16 Port { get; private set; }
         public IPAddress Address { get; private set; }
 
@@ -73,6 +74,7 @@ namespace DashboardServer
             }
             Port = config.port;
             Address = IPAddress.Parse((string)config.address);
+            HideConsole = config.hide_console;
         }
 
     }
