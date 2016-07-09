@@ -7,16 +7,16 @@
     "Keyboard.setSuppressedKeys",
     "Keyboard.getSuppressedKeys",
     "Keyboard.setNotificationKeys",
-    "Keyboard.getNotificationKeys"
+    "Keyboard.getNotificationKeys",
+    "Screen.setBrightness",
+    "Screen.getBrightness"
   ],
   "keyboard": {
     "notify_allowed_keys": [
-      "MediaPlayPause",
-      "MediaPreviousTrack",
-      "MediaNextTrack",
-      "MediaStop"
+      "*all*"
     ],
     "suppress_allowed_keys": [
+      "*all*"
     ]
   }
 }

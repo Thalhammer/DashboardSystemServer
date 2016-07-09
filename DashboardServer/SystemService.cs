@@ -78,6 +78,34 @@ namespace DashboardServer
                     keys = NotifyList == null ? null : NotifyList.Select((n) => n.ToString())
                 };
             });
+            addRPCMethod("Screen.setBrightness", (parameters) =>
+            {
+                byte brightness = parameters.brightness;
+                var valid = ScreenControl.GetBrightnessLevels();
+                int bestlevel = 0;
+                for (int i = 0; i < valid.Length; i++)
+                {
+                    if(Math.Abs(brightness - valid[bestlevel]) > Math.Abs(brightness - valid[i]))
+                    {
+                        bestlevel = i;
+                    }
+                }
+                if (valid.Length != 0)
+                {
+                    ScreenControl.SetBrightness(valid[bestlevel]);
+                }
+                return new
+                {
+                    brightness = ScreenControl.GetBrightness()
+                };
+            });
+            addRPCMethod("Screen.getBrightness", (parameters) =>
+            {
+                return new
+                {
+                    brightness = ScreenControl.GetBrightness()
+                };
+            });
             addRPCMethod("Keyboard.getNotificationKeys", (parameters) =>
             {
                 return NotifyList == null ? null : NotifyList.Select((n) => Enum.GetName(typeof(Keys), n)).ToArray();
@@ -108,6 +136,7 @@ namespace DashboardServer
 
         protected override void OnError(ErrorEventArgs e)
         {
+            KeyBoardEvent -= this.SystemService_KeyBoardEvent;
         }
 
         private void SystemService_KeyBoardEvent(object sender, KeyBoardEventArgs args)
@@ -137,6 +166,7 @@ namespace DashboardServer
 
         protected override void OnMessage(MessageEventArgs e)
         {
+            if (!e.IsText) return;
             _rpc.onReceive(e.Data);
         }
     }
