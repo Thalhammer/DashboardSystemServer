@@ -78,6 +78,10 @@ namespace DashboardServer
                     keys = NotifyList == null ? null : NotifyList.Select((n) => n.ToString())
                 };
             });
+            addRPCMethod("Keyboard.getNotificationKeys", (parameters) =>
+            {
+                return NotifyList == null ? null : NotifyList.Select((n) => Enum.GetName(typeof(Keys), n)).ToArray();
+            });
             addRPCMethod("Screen.setBrightness", (parameters) =>
             {
                 byte brightness = parameters.brightness;
@@ -105,10 +109,6 @@ namespace DashboardServer
                 {
                     brightness = ScreenControl.GetBrightness()
                 };
-            });
-            addRPCMethod("Keyboard.getNotificationKeys", (parameters) =>
-            {
-                return NotifyList == null ? null : NotifyList.Select((n) => Enum.GetName(typeof(Keys), n)).ToArray();
             });
             addRPCMethod("Server.getSupportedMethods", (parameter) =>
             {
