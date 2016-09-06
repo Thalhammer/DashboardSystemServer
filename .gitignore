@@ -1,5 +1,5 @@
 *.exe
-DashboardServer/bin
-DashboardServer/obj
+bin
+obj
 packages
 .vs

@@ -9,7 +9,11 @@
     "Keyboard.setNotificationKeys",
     "Keyboard.getNotificationKeys",
     "Screen.setBrightness",
-    "Screen.getBrightness"
+    "Screen.getBrightness",
+    "Screen.turnOn",
+    "Screen.turnOff",
+    "Screen.turnOffLowPower",
+    "Server.executeCode"
   ],
   "keyboard": {
     "notify_allowed_keys": [

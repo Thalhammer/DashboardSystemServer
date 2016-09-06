@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -109,6 +110,34 @@ namespace DashboardServer
             {
 
             }
+        }
+
+        [DllImport("user32.dll")]
+        private static extern int SendMessage(int hWnd, uint Msg, int wParam, int lParam);
+        [DllImport("user32.dll")]
+        static extern void mouse_event(Int32 dwFlags, Int32 dx, Int32 dy, Int32 dwData, UIntPtr dwExtraInfo);
+
+
+        public static void SetState(MonitorState state)
+        {
+            if (state != MonitorState.On)
+            {
+                SendMessage(0xffff, WM_SYSCOMMAND, SC_MONITORPOWER, (int)state);
+            } else
+            {
+                mouse_event(MouseEventMove, 0, 1, 0, UIntPtr.Zero);
+            }
+        }
+
+        private const int SC_MONITORPOWER = 0xF170;
+        private const int WM_SYSCOMMAND = 0x0112;
+        private const int MouseEventMove = 0x0001;
+
+        public enum MonitorState
+        {
+            On = -1,
+            Off = 2,
+            LowPower = 1
         }
     }
 }

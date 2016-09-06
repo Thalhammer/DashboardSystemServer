@@ -4,6 +4,9 @@ using System.Windows.Forms;
 using System.Linq;
 using WebSocketSharp;
 using WebSocketSharp.Server;
+using Microsoft.CSharp;
+using System.CodeDom.Compiler;
+using System.Reflection;
 
 namespace DashboardServer
 {
@@ -109,6 +112,35 @@ namespace DashboardServer
                 {
                     brightness = ScreenControl.GetBrightness()
                 };
+            });
+            addRPCMethod("Screen.turnOn", (parameters) =>
+            {
+                ScreenControl.SetState(ScreenControl.MonitorState.On);
+                return new { };
+            });
+            addRPCMethod("Screen.turnOff", (parameters) =>
+            {
+                ScreenControl.SetState(ScreenControl.MonitorState.Off);
+                return new { };
+            });
+            addRPCMethod("Screen.turnOffLowPower", (parameters) =>
+            {
+                ScreenControl.SetState(ScreenControl.MonitorState.LowPower);
+                return new { };
+            });
+            addRPCMethod("Server.executeCode", (parameters) =>
+            {
+                string code = parameters.code;
+                string[] assemblies = new string[0];
+                string type = parameters.type;
+                string method = parameters.method;
+
+                AppDomain domain = AppDomain.CreateDomain("CompileDomain");
+                CompileHelper.CompilerService cs = (CompileHelper.CompilerService)domain.CreateInstanceFromAndUnwrap("CompileHelper.dll", "CompileHelper.CompilerService");
+                cs.Compile(code, assemblies, type, method);
+                AppDomain.Unload(domain);
+
+                return new { };
             });
             addRPCMethod("Server.getSupportedMethods", (parameter) =>
             {
