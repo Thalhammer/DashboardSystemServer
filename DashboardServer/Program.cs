@@ -26,7 +26,7 @@ namespace DashboardServer
         private void SetupWebSocketServer(Configuration config)
         {
             _wssv = new WebSocketServer(config.Address, config.Port, true);
-            _wssv.SslConfiguration.ServerCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2("key.p12", "Temp");
+            _wssv.SslConfiguration.ServerCertificate = CertificateManager.LoadCertificates();
             _wssv.AddWebSocketService<SystemService>("/system", () => { return new SystemService(config); });
             _wssv.Start();
         }
