@@ -58,7 +58,7 @@ namespace DashboardServer
             certificateGenerator.AddExtension(X509Extensions.BasicConstraints, true, new BasicConstraints(true));
             certificateGenerator.AddExtension(X509Extensions.KeyUsage, true, new KeyUsage(KeyUsage.KeyCertSign));
             certificateGenerator.AddExtension(X509Extensions.ExtendedKeyUsage, true, new ExtendedKeyUsage(new[] { KeyPurposeID.IdKPServerAuth }));
-            certificateGenerator.AddExtension(X509Extensions.NameConstraints, true, new NameConstraints(new ArrayList() { new GeneralSubtree(new GeneralName(GeneralName.DnsName, "localhost.systemserver.tk")) }, new ArrayList()));
+            certificateGenerator.AddExtension(X509Extensions.NameConstraints, true, new NameConstraints(new ArrayList() { new GeneralSubtree(new GeneralName(GeneralName.DnsName, "localhost")) }, new ArrayList()));
 
             // Subject Public Key
             KeyGenerationParameters keyGenerationParameters = new KeyGenerationParameters(random, keyStrength);
@@ -229,14 +229,14 @@ namespace DashboardServer
             var caCert = TryLoadCertificate("cacert");
             if (caCert == null)
             {
-                caCert = GenerateCACertificate("CN=SystemServerTKRootCA");
+                caCert = GenerateCACertificate("CN=DashboardSystemServerCA");
                 AddCertToStore(caCert, StoreName.Root, StoreLocation.CurrentUser);
                 StoreCertificate("cacert", caCert);
             }
             var clientCert = TryLoadCertificate("clientcert");
             if (clientCert == null)
             {
-                clientCert = GenerateSelfSignedCertificate("localhost.systemserver.tk", "SystemServerTKRootCA", caCert);
+                clientCert = GenerateSelfSignedCertificate("localhost", "DashboardSystemServerCA", caCert);
                 StoreCertificate("clientcert", clientCert);
             }
 
